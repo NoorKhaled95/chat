@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "709852426523",
+    "project_id": "peak-axiom-230006",
+    "storage_bucket": "peak-axiom-230006.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:709852426523:android:ec1d80a6dc8dac1c2be3be",
+        "android_client_info": {
+          "package_name": "com.example.maan_application_1"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "709852426523-2c0a6d5jn4k2t5slsuc3h0r09pm885lh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZnTfiqAcC39VfMeYchvJZ7lncv_N2Lfg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "709852426523-2c0a6d5jn4k2t5slsuc3h0r09pm885lh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
