@@ -1,6 +1,7 @@
-enum Gender { mail, female }
+enum Gender { male, female }
 
 class RegisterRequest {
+  String id;
   String email;
   String password;
   String userName;
@@ -10,6 +11,7 @@ class RegisterRequest {
   String country;
 
   RegisterRequest({
+    this.id,
     this.email,
     this.password,
     this.userName,
@@ -21,10 +23,11 @@ class RegisterRequest {
 
   toMap() {
     return {
+      'id': this.id,
       'email': this.email,
       'userName': this.userName,
       'phoneNumber': this.phoneNumber,
-      'gender': this.gender == Gender.mail ? 'male' : 'female',
+      'gender': this.gender == Gender.male ? 'male' : 'female',
       'country': this.country,
       'city': this.city,
     };

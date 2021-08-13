@@ -1,12 +1,8 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:maan_application_1/auth/data/auth_exception_handler.dart';
-import 'package:maan_application_1/auth/data/auth_helper.dart';
-import 'package:maan_application_1/auth/data/auth_status_enum.dart';
-import 'package:maan_application_1/auth/ui/register_screen.dart';
-import 'package:maan_application_1/chat/home_screen.dart';
-import 'package:string_validator/string_validator.dart';
+import 'package:maan_application_1/ui/auth/data/auth_helper.dart';
+import 'package:maan_application_1/ui/auth/ui/register_screen.dart';
+import 'package:maan_application_1/ui/auth/ui/widgets/custom_textfield.dart';
+import 'package:maan_application_1/widgets/custom_button.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -14,47 +10,45 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String email = '';
-  String password = '';
+  String email;
+  String password;
 
-  GlobalKey<FormState> formkey = GlobalKey();
+  String valueText;
+  String codeDialog;
 
-  saveForm() async {
-    if (formkey.currentState.validate()) {
-      formkey.currentState.save();
-      final status = await AuthHelper.authHelper.signIn(email, password);
-      // if (status == AuthResultStatus.successful) {
-      if (AuthHelper.authHelper.getCurrentUser().emailVerified) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        );
-      } else {
-        _showAlertDialog('Error', 'Check your email to verify account!');
-        AuthHelper.authHelper.signOut(email);
-      }
-      // } else {
-      //   final errorMsg = AuthExceptionHandler.generateExceptionMessage(status);
-      //   _showAlertDialog('Error', errorMsg);
-      // }
-    } else {
-      return;
+  saveEmail(v) => this.email = v;
+
+  savePassword(v) => this.password = v;
+
+  nullValidate(String v) {
+    if (v == null || v.length == 0) {
+      return 'Required Field';
     }
   }
 
-  String codeDialog;
-  String valueText;
+  login() {
+    if (formKey.currentState.validate()) {
+      formKey.currentState.save();
+
+      AuthHelper.authHelper.signIn(email, password, context);
+    }
+  }
+
+  verifyEmail() {
+    AuthHelper.authHelper.sendEmailVerification(email);
+  }
+
+  GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       body: Center(
         child: Container(
           padding: EdgeInsets.all(20),
           child: SingleChildScrollView(
             child: Form(
-              key: formkey,
+              key: formKey,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
@@ -68,53 +62,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: 64,
                   ),
-                  TextFormField(
-                    validator: (value) {
-                      if (!isEmail(value)) {
-                        return 'incorrect email syntax';
-                      }
-                    },
-                    onChanged: (value) {
-                      this.email = value;
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
+                  CustomTextfeild(
+                    label: 'Email',
+                    save: saveEmail,
+                    textInputType: TextInputType.emailAddress,
+                    validate: nullValidate,
                   ),
-                  SizedBox(
-                    height: 20,
+                  CustomTextfeild(
+                    label: 'Password',
+                    isHidden: true,
+                    save: savePassword,
+                    validate: nullValidate,
                   ),
-                  TextFormField(
-                    validator: (value) {
-                      if (value.length == 0) {
-                        return 'Required Field';
-                      } else if (value.length < 6) {
-                        return 'Password must be more than 6 letters';
-                      }
-                    },
-                    onChanged: (value) {
-                      this.password = value;
-                    },
-                    decoration: InputDecoration(
-                        labelText: 'Password',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                  ),
-                  SizedBox(
-                    height: 20,
-                  ),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      ),
-                      onPressed: () {
-                        saveForm();
-                      },
-                      child: Text('SUBMIT')),
-                  SizedBox(
-                    height: 20,
+                  CustomButton(title: 'Login', function: login),
+                  CustomButton(
+                    title: 'Send Verification Code Again',
+                    function: verifyEmail,
+                    backColor: 0xffF2F3F4,
+                    textColor: Colors.black,
                   ),
                   Row(
                     children: [
@@ -183,17 +148,6 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-  }
-
-  _showAlertDialog(String title, String message) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-            title: Text(title),
-            content: Text(message),
-          );
-        });
   }
 
   TextEditingController _textFieldController = TextEditingController();

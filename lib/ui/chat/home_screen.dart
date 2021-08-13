@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:maan_application_1/auth/data/auth_helper.dart';
-import 'package:maan_application_1/auth/ui/login_screen.dart';
+import 'package:maan_application_1/ui/auth/data/auth_helper.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
