@@ -5,7 +5,14 @@ import 'package:maan_application_1/ui/auth/ui/login_screen.dart';
 import 'package:maan_application_1/ui/chat/home_screen.dart';
 
 void main() {
-  runApp(MaterialApp(home: MyApp()));
+  runApp(MaterialApp(
+      theme: ThemeData(
+        // Define the default brightness and colors.
+        // brightness: Brightness.dark,
+        primaryColor: Color(0xffdd5a44),
+        accentColor: Color(0xffdd5a44),
+      ),
+      home: MyApp()));
 }
 
 class MyApp extends StatelessWidget {

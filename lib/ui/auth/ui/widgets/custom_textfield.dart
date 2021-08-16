@@ -23,8 +23,20 @@ class CustomTextfeild extends StatelessWidget {
         validator: (v) => validate(v),
         decoration: InputDecoration(
             labelText: label,
-            border:
-                OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
+            labelStyle: TextStyle(
+              color: Colors.black,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Color(0Xffdd5a44),
+              ),
+            ),
+            // enabledBorder: OutlineInputBorder(
+            //   borderSide: BorderSide(color: Colors.white),
+            // ),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            )),
       ),
     );
   }

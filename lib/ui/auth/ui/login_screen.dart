@@ -35,7 +35,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   verifyEmail() {
-    AuthHelper.authHelper.sendEmailVerification(email);
+    if (formKey.currentState.validate()) {
+      formKey.currentState.save();
+
+      AuthHelper.authHelper.sendEmailVerification(email, password, context);
+    }
   }
 
   GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -52,13 +56,18 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Center(
-                    child: Text(
-                      'Login',
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  Hero(
+                    tag: 'logo',
+                    child: Container(
+                      height: 120.0,
+                      child: Image.asset('assets/images/logo.png'),
                     ),
                   ),
+                  // child: Text(
+                  //   'Login',
+                  //   style:
+                  //       TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  // ),
                   SizedBox(
                     height: 64,
                   ),
@@ -117,7 +126,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ' Register',
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
-                                color: Colors.blue,
+                                color: Color(0Xffdd5a44),
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -133,7 +142,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             'Forget password',
                             style: TextStyle(
                                 decoration: TextDecoration.underline,
-                                color: Colors.blue,
+                                color: Color(0Xffdd5a44),
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -173,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 onPressed: () {
                   setState(() {
                     codeDialog = valueText;
-                    AuthHelper.authHelper.resetPassword(codeDialog);
+                    AuthHelper.authHelper.resetPassword(codeDialog, context);
                     Navigator.pop(context);
                   });
                 },

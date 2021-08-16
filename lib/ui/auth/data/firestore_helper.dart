@@ -7,7 +7,7 @@ class FirestoreHelper {
   static FirestoreHelper firestoreHelper = FirestoreHelper._();
   FirebaseFirestore firestore = FirebaseFirestore.instance;
   saveUserInFirestore(RegisterRequest registerRequest) async {
-    firestore
+    await firestore
         .collection('Users')
         .doc(registerRequest.id)
         .set(registerRequest.toMap());

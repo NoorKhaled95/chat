@@ -57,7 +57,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return
+        // Container(
+        //   decoration: BoxDecoration(
+        //     image: DecorationImage(
+        //       image: AssetImage('assets/images/back.jpg'),
+        //       fit: BoxFit.cover,
+        //     ),
+        //   ),
+        //   constraints: BoxConstraints.expand(),
+        //   child:
+        Scaffold(
+      // resizeToAvoidBottomInset: false,
+      // backgroundColor: Colors.transparent,
+      // extendBodyBehindAppBar: true,
       body: Container(
         padding: EdgeInsets.all(20),
         margin: EdgeInsets.only(top: 64),
@@ -67,12 +80,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Center(
-                  child: Text(
-                    'Registration',
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                Hero(
+                  tag: 'logo',
+                  child: Container(
+                    height: 100.0,
+                    child: Image.asset('assets/images/logo.png'),
                   ),
                 ),
+                // Center(
+                //   child: Text(
+                //     'Registration',
+                //     style:
+                //         TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                //   ),
+                // ),
                 SizedBox(
                   height: 32,
                 ),
@@ -108,6 +129,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   save: saveCity,
                   validate: nullValidate,
                 ),
+
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -115,13 +137,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('Gender'),
+                          Container(
+                              margin: EdgeInsets.only(top: 15, left: 20),
+                              child: Text('Gender')),
                           RadioListTile(
                               title: Text('Male'),
                               value: Gender.male,
                               groupValue: gender,
                               onChanged: (value) {
                                 saveGender(value);
+                                setState(() {});
                               }),
                           RadioListTile(
                               title: Text('Female'),
@@ -129,6 +154,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               groupValue: gender,
                               onChanged: (value) {
                                 saveGender(value);
+                                setState(() {});
                               })
                         ],
                       ),
@@ -145,7 +171,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       'Do you have an account? Login',
                       style: TextStyle(
                           decoration: TextDecoration.underline,
-                          color: Colors.blue,
+                          color: Color(0Xffdd5a44),
                           fontSize: 12,
                           fontWeight: FontWeight.bold),
                     ),
@@ -156,6 +182,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
           ),
         ),
       ),
+      // ),
     );
   }
 }
