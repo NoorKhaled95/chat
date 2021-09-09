@@ -96,6 +96,7 @@ class RegisterScreen extends StatelessWidget {
                     Center(
                       child: GestureDetector(
                         onTap: () {
+                          provider.logout();
                           RouteHelper.routeHelper
                               .goAndReplacePage(LoginScreen.routeName);
                         },

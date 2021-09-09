@@ -51,7 +51,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           title: 'Login', function: provider.loginUser),
                       CustomButton(
                         title: 'Send Verification Code Again',
-                        function: provider.verifyEmail,
+                        function: provider.sendVerifyEmail,
                         backColor: 0xffF2F3F4,
                         textColor: Colors.black,
                       ),
@@ -62,6 +62,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 EdgeInsets.only(top: 20, left: 20, bottom: 20),
                             child: GestureDetector(
                               onTap: () {
+                                provider.logout();
                                 RouteHelper.routeHelper
                                     .goAndReplacePage(RegisterScreen.routeName);
                               },
@@ -80,8 +81,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 EdgeInsets.only(top: 20, right: 20, bottom: 20),
                             child: GestureDetector(
                               onTap: () {
+                                provider.logout();
                                 RouteHelper.routeHelper
-                                    .goToPage(RegisterScreen.routeName);
+                                    .goAndReplacePage(RegisterScreen.routeName);
                               },
                               child: Text(
                                 ' Register',
@@ -97,6 +99,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             margin: EdgeInsets.all(20),
                             child: GestureDetector(
                               onTap: () {
+                                provider.logout();
                                 RouteHelper.routeHelper.showCustomInputDialoug(
                                     'Reset Password', 'Enter you email');
                               },

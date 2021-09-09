@@ -25,10 +25,17 @@ class RouteHelper {
         builder: (context) {
           return AlertDialog(
             title: Text('Reset Password'),
-            content: TextField(
-              controller: Provider.of<AuthProvider>(context, listen: false)
-                  .passwordController,
-              decoration: InputDecoration(hintText: "Enter your email"),
+            content: Form(
+              key: Provider.of<AuthProvider>(context, listen: false)
+                  .resetPasswordKey,
+              child: TextFormField(
+                validator: (v) =>
+                    Provider.of<AuthProvider>(context, listen: false)
+                        .nullValidate(v),
+                controller: Provider.of<AuthProvider>(context, listen: false)
+                    .emailController,
+                decoration: InputDecoration(hintText: "Enter your email"),
+              ),
             ),
             actions: <Widget>[
               CustomButton(
@@ -37,7 +44,7 @@ class RouteHelper {
                       Provider.of<AuthProvider>(context, listen: false)
                           .resetPassword(
                               Provider.of<AuthProvider>(context, listen: false)
-                                  .passwordController
+                                  .emailController
                                   .text)),
             ],
           );

@@ -45,69 +45,72 @@ class ChatPage extends StatelessWidget {
       ),
       body: Column(
         children: [
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.all(8),
-              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                stream: Provider.of<ChatProvider>(context).getStream(),
-                builder: (context, querySnapshot) {
-                  if (querySnapshot.hasData) {
-                    List<QueryDocumentSnapshot<Map<String, dynamic>>>
-                        documents = querySnapshot.data.docs;
+          Consumer<ChatProvider>(builder: (context, provider, x) {
+            return Expanded(
+              child: Container(
+                padding: EdgeInsets.all(8),
+                child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                  stream: provider.getStream(),
+                  builder: (context, querySnapshot) {
+                    if (querySnapshot.hasData) {
+                      List<QueryDocumentSnapshot<Map<String, dynamic>>>
+                          documents = querySnapshot.data.docs;
 
-                    List<MessageModel> messages = documents
-                        .map((e) => MessageModel.fromMap(e.data()))
-                        .toList();
+                      List<MessageModel> messages = documents
+                          .map((e) => MessageModel.fromMap(e.data()))
+                          .toList();
 
-                    List<Widget> widgets = messages.map((e) {
-                      return Provider.of<AuthProvider>(context, listen: false)
-                                      .userModel !=
-                                  null &&
-                              Provider.of<AuthProvider>(context, listen: false)
-                                      .userModel
-                                      .id !=
-                                  null
-                          ? e.senderId ==
-                                  Provider.of<AuthProvider>(context,
-                                          listen: false)
-                                      .userModel
-                                      .id
-                              ? MessageBubble(
-                                  isMe: true,
-                                  sender: e.userName,
-                                  text: e.content,
-                                  imageUrl: e.imageUrl,
-                                  timestamp: e.timeStamp != null
-                                      ? e.timeStamp
-                                      : Timestamp.fromDate(DateTime.now()),
-                                )
-                              : MessageBubble(
-                                  isMe: false,
-                                  sender: e.userName,
-                                  text: e.content,
-                                  imageUrl: e.imageUrl,
-                                  timestamp: e.timeStamp,
-                                )
-                          : CircularProgressIndicator(color: Colors.black);
-                    }).toList();
+                      List<Widget> widgets = messages.map((e) {
+                        return Provider.of<AuthProvider>(context, listen: false)
+                                        .userModel !=
+                                    null &&
+                                Provider.of<AuthProvider>(context,
+                                            listen: false)
+                                        .userModel
+                                        .id !=
+                                    null
+                            ? e.senderId ==
+                                    Provider.of<AuthProvider>(context,
+                                            listen: false)
+                                        .userModel
+                                        .id
+                                ? MessageBubble(
+                                    isMe: true,
+                                    sender: e.userName,
+                                    text: e.content,
+                                    imageUrl: e.imageUrl,
+                                    timestamp: e.timeStamp != null
+                                        ? e.timeStamp
+                                        : Timestamp.fromDate(DateTime.now()),
+                                  )
+                                : MessageBubble(
+                                    isMe: false,
+                                    sender: e.userName,
+                                    text: e.content,
+                                    imageUrl: e.imageUrl,
+                                    timestamp: e.timeStamp,
+                                  )
+                            : Text('');
+                      }).toList();
 
-                    return ListView(
-                      children: widgets,
-                      controller: _controller,
-                    );
-                  } else {
-                    return Container(
-                      height: 20,
-                      width: 20,
-                      child: Center(
-                        child: CircularProgressIndicator(),
-                      ),
-                    );
-                  }
-                },
+                      return ListView(
+                        children: widgets,
+                        controller: _controller,
+                      );
+                    } else {
+                      return Container(
+                        height: 20,
+                        width: 20,
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      );
+                    }
+                  },
+                ),
               ),
-            ),
-          ),
+            );
+          }),
           Container(
             width: double.infinity,
             height: 60.0,

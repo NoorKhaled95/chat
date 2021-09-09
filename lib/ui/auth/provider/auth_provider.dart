@@ -11,7 +11,10 @@ import 'package:maan_application_1/ui/auth/models/user_models.dart';
 import 'package:maan_application_1/ui/chat/ui/chat_page.dart';
 import 'package:maan_application_1/ui/chat/ui/edit_screen.dart';
 import 'package:maan_application_1/ui/auth/ui/login_screen.dart';
+import 'package:maan_application_1/ui/chat/ui/profile_page.dart';
 import 'package:maan_application_1/ui/helpers/route_helper.dart';
+import 'package:maan_application_1/widgets/flutter_toast.dart';
+import 'package:maan_application_1/widgets/progress_dialogue.dart';
 
 class AuthProvider extends ChangeNotifier {
   AuthProvider() {
@@ -67,6 +70,7 @@ class AuthProvider extends ChangeNotifier {
   GlobalKey<FormState> registerKey = GlobalKey<FormState>();
   GlobalKey<FormState> editKey = GlobalKey<FormState>();
   GlobalKey<FormState> loginKey = GlobalKey<FormState>();
+  GlobalKey<FormState> resetPasswordKey = GlobalKey<FormState>();
   TextStyle headingStyle = TextStyle(fontSize: 14, color: Color(0xff8276EB));
   TextStyle headingStyleName = TextStyle(
       fontSize: 20, color: Color(0xff000000), fontWeight: FontWeight.w800);
@@ -75,6 +79,7 @@ class AuthProvider extends ChangeNotifier {
 
   registerNewUser() async {
     if (registerKey.currentState.validate()) {
+      ProgressDialoge().show();
       RegisterRequest registerRequest = RegisterRequest(
           city: cityController.text,
           country: countryController.text,
@@ -87,24 +92,26 @@ class AuthProvider extends ChangeNotifier {
       UserCredential userCredential = await signup(registerRequest);
       registerRequest.id = userCredential.user.uid;
       setUserInFirestore(registerRequest);
-      await verifyEmail();
+      ProgressDialoge().dismiss();
 
-      RouteHelper.routeHelper
-          .showCustomDialoug('please chech your email to verify your account');
+      await verifyEmail();
 
       RouteHelper.routeHelper.goAndReplacePage(LoginScreen.routeName);
     }
   }
 
   loginUser() async {
-    UserCredential userCredential = await login();
-    if (userCredential.user.emailVerified) {
-      getUserFormFirestore(userCredential.user.uid);
-      RouteHelper.routeHelper.goAndReplacePage(ChatPage.routeName);
-    } else {
-      verifyEmail();
-      RouteHelper.routeHelper.showCustomDialoug(
-          'sorry, you cant login because your email is not verified');
+    if (loginKey.currentState.validate()) {
+      ProgressDialoge().show();
+      UserCredential userCredential = await login();
+      if (userCredential.user.emailVerified) {
+        getUserFormFirestore(userCredential.user.uid);
+        ProgressDialoge().dismiss();
+        RouteHelper.routeHelper.goAndReplacePage(ChatPage.routeName);
+      } else {
+        ProgressDialoge().dismiss();
+        verifyEmail();
+      }
     }
   }
 
@@ -121,7 +128,7 @@ class AuthProvider extends ChangeNotifier {
     String imageUrl =
         await FireStorageHelper.fireStorageHelper.uploadImage(this.file);
     userModel.imageUrl = imageUrl;
-    updateUser();
+    updateUserImage();
   }
 
   Future<UserCredential> signup(RegisterRequest registerRequest) async {
@@ -137,13 +144,27 @@ class AuthProvider extends ChangeNotifier {
   }
 
   resetPassword(String email) {
-    AuthHelper.authHelper.resetPassword(email);
-    RouteHelper.routeHelper.goBack();
+    if (resetPasswordKey.currentState.validate()) {
+      AuthHelper.authHelper.resetPassword(email);
+      FlutterToast('please chech your email to reset password').showMessage();
+      RouteHelper.routeHelper.goBack();
+    }
   }
 
   verifyEmail() async {
     await AuthHelper.authHelper.verifyEmail();
+    FlutterToast('please check your email to verify your account')
+        .showMessage();
     logout();
+  }
+
+  sendVerifyEmail() async {
+    if (loginKey.currentState.validate()) {
+      await AuthHelper.authHelper.verifyEmail();
+      FlutterToast('please chech your email to verify your account')
+          .showMessage();
+      logout();
+    }
   }
 
   logout() async {
@@ -168,8 +189,22 @@ class AuthProvider extends ChangeNotifier {
   }
 
   updateUser() async {
+    if (editKey.currentState.validate()) {
+      ProgressDialoge().show();
+      ProgressDialoge().dismiss();
+      await FirestoreHelper.firestoreHelper.updateUserFromFirestore(userModel);
+      getUserFormFirestore(userModel.id);
+      RouteHelper.routeHelper.goAndReplacePage(ProfilePage.routeName);
+      notifyListeners();
+    }
+  }
+
+  updateImageUser() async {
+    ProgressDialoge().show();
+    ProgressDialoge().dismiss();
     await FirestoreHelper.firestoreHelper.updateUserFromFirestore(userModel);
     getUserFormFirestore(userModel.id);
+    RouteHelper.routeHelper.goAndReplacePage(ProfilePage.routeName);
     notifyListeners();
   }
 

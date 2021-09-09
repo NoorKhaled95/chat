@@ -19,16 +19,11 @@ class EditScreen extends StatelessWidget {
           padding: EdgeInsets.all(20),
           child: Consumer<AuthProvider>(builder: (context, provider, x) {
             return Form(
+              key: provider.editKey,
               child: SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    CustomTextfeild(
-                      label: 'Email',
-                      controller: provider.emailController,
-                      textInputType: TextInputType.emailAddress,
-                      isEnabled: false,
-                    ),
                     CustomTextfeild(
                       label: 'User Name',
                       controller: provider.userNameController,
