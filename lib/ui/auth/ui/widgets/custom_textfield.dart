@@ -1,26 +1,32 @@
 import 'package:flutter/material.dart';
+import 'package:maan_application_1/ui/auth/provider/auth_provider.dart';
+import 'package:provider/provider.dart';
 
 class CustomTextfeild extends StatelessWidget {
   String label;
-  Function validate;
-  Function save;
-  bool isHidden;
+  String text;
+  TextEditingController controller;
+  bool isHidden, isEnabled;
   TextInputType textInputType;
+
   CustomTextfeild(
       {this.label,
-      this.save,
-      this.validate,
+      this.controller,
       this.textInputType = TextInputType.text,
-      this.isHidden = false});
+      this.isHidden = false,
+      this.isEnabled = true});
   @override
   Widget build(BuildContext context) {
     return Container(
       margin: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
       child: TextFormField(
+        initialValue: text,
+        enabled: isEnabled,
         obscureText: isHidden,
         keyboardType: textInputType,
-        onSaved: (v) => save(v),
-        validator: (v) => validate(v),
+        controller: this.controller,
+        validator: (v) =>
+            Provider.of<AuthProvider>(context, listen: false).nullValidate(v),
         decoration: InputDecoration(
             labelText: label,
             labelStyle: TextStyle(
@@ -28,15 +34,11 @@ class CustomTextfeild extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderSide: BorderSide(
-                color: Color(0Xffdd5a44),
+                color: Color(0XFFE79215),
               ),
             ),
-            // enabledBorder: OutlineInputBorder(
-            //   borderSide: BorderSide(color: Colors.white),
-            // ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            )),
+            border:
+                OutlineInputBorder(borderRadius: BorderRadius.circular(10))),
       ),
     );
   }

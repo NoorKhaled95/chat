@@ -1,95 +1,92 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:maan_application_1/ui/auth/data/auth_helper.dart';
+import 'package:maan_application_1/ui/auth/provider/auth_provider.dart';
+import 'package:maan_application_1/ui/chat/providers/chat_provider.dart';
+import 'package:maan_application_1/ui/chat/ui/chat_page.dart';
+import 'package:maan_application_1/ui/chat/ui/edit_screen.dart';
 import 'package:maan_application_1/ui/auth/ui/login_screen.dart';
-import 'package:maan_application_1/ui/chat/home_screen.dart';
+import 'package:maan_application_1/ui/auth/ui/register_screen.dart';
+import 'package:maan_application_1/ui/auth/ui/welcome_screen.dart';
+import 'package:maan_application_1/ui/chat/ui/profile_page.dart';
+import 'package:maan_application_1/ui/helpers/route_helper.dart';
+import 'package:maan_application_1/splash_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:responsive_framework/responsive_wrapper.dart';
+import 'package:responsive_framework/utils/scroll_behavior.dart';
 
-void main() {
-  runApp(MaterialApp(
-      theme: ThemeData(
-        // Define the default brightness and colors.
-        // brightness: Brightness.dark,
-        primaryColor: Color(0xffdd5a44),
-        accentColor: Color(0xffdd5a44),
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider<AuthProvider>(
+        create: (context) => AuthProvider(),
       ),
-      home: MyApp()));
+      ChangeNotifierProvider<ChatProvider>(create: (context) => ChatProvider())
+    ],
+    child: MaterialApp(
+      navigatorKey: RouteHelper.routeHelper.navigationKey,
+      builder: (context, widget) => ResponsiveWrapper.builder(
+        BouncingScrollWrapper.builder(context, widget),
+        maxWidth: 1200,
+        minWidth: 400,
+        defaultScale: true,
+        breakpoints: [
+          ResponsiveBreakpoint.resize(400, name: MOBILE),
+          ResponsiveBreakpoint.autoScale(800, name: TABLET),
+          ResponsiveBreakpoint.resize(1000, name: DESKTOP),
+        ],
+      ),
+      routes: {
+        ProfilePage.routeName: (context) => ProfilePage(),
+        LoginScreen.routeName: (context) => LoginScreen(),
+        RegisterScreen.routeName: (context) => RegisterScreen(),
+        EditScreen.routeName: (context) => EditScreen(),
+        WelcomeScreen.routeName: (context) => WelcomeScreen(),
+        SplashScreen.routeName: (context) => SplashScreen(),
+        ChatPage.routeName: (context) => ChatPage(),
+      },
+      home: MyApp(),
+      debugShowCheckedModeBanner: false,
+    ),
+  ));
 }
 
-class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
+class MyApp extends StatefulWidget {
+  // Create the initialization Future outside of `build`:
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<MyApp> {
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  AuthProvider authProvider = AuthProvider();
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<FirebaseApp>(
-        future: Firebase.initializeApp(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (AuthHelper.authHelper.getCurrentUser() != null) {
-              return MaterialApp(home: HomeScreen());
-              // return Scaffold(
-              //   appBar: AppBar(title: Text('Register')),
-              //   body: Center(
-              //     child: Container(
-              //         child: Column(
-              //       children: [
-              //         ElevatedButton(
-              //             onPressed: () {
-              //               AuthHelper.authHelper.signUp(RegisterRequest(
-              //                   email: 'noshwadeh@gmail.com',
-              //                   password: '987654321'));
-              //               AuthHelper.authHelper.signOut('noshwadeh@gmail.com');
-              //               AuthHelper.authHelper
-              //                   .sendEmailVerification('noshwadeh@gmail.com');
-              //               AuthHelper.authHelper.signOut('noshwadeh@gmail.com');
-              //             },
-              //             child: Text('Register')),
-              //         ElevatedButton(
-              //             onPressed: () {
-              //               AuthHelper.authHelper
-              //                   .signIn('noshwadeh@gmail.com', '987654321');
-              //               if (AuthHelper.authHelper
-              //                   .getCurrentUserId()
-              //                   .emailVerified) {
-              //                 print('verified!');
-              //               } else {
-              //                 print('not verified!');
-              //                 AuthHelper.authHelper
-              //                     .signOut('noshwadeh@gmail.com');
-              //               }
-              //             },
-              //             child: Text('Sign In')),
-              //         ElevatedButton(
-              //             onPressed: () {
-              //               AuthHelper.authHelper.signOut('noshwadeh@gmail.com');
-              //             },
-              //             child: Text('Signout')),
-              //         ElevatedButton(
-              //             onPressed: () {
-              //               AuthHelper.authHelper
-              //                   .resetPassword('noshwadeh@gmail.com');
-              //             },
-              //             child: Text('Reset password')),
-              //         ElevatedButton(
-              //             onPressed: () {
-              //               AuthHelper.authHelper
-              //                   .sendEmailVerification('noshwadeh@gmail.com');
-              //             },
-              //             child: Text('send verification email')),
-              //       ],
-              //     )),
-              //   ),
-              // );
-            } else {
-              return MaterialApp(home: LoginScreen());
-            }
-          } else if (snapshot.hasError) {
-            return Scaffold(
-              body: Center(child: Text('Error')),
-            );
-          } else {
-            return Scaffold(
-              body: Center(child: Text('Loading')),
-            );
-          }
-        });
+    return FutureBuilder(
+      future: _initialization,
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Scaffold(
+            body: Center(
+              child: Text('Error'),
+            ),
+          );
+        }
+        if (snapshot.connectionState == ConnectionState.done) {
+          return MaterialApp(
+            home: SplashScreen(),
+            debugShowCheckedModeBanner: false,
+          );
+        }
+        return Scaffold(
+          backgroundColor: Color(0XFFE79215),
+          body: Center(
+            child: CircularProgressIndicator(),
+          ),
+        );
+      },
+    );
   }
 }

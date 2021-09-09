@@ -8,7 +8,7 @@ class CustomButton extends StatelessWidget {
   CustomButton(
       {@required this.title,
       @required this.function,
-      this.backColor = 0xffdd5a44,
+      this.backColor = 0XFFE79215,
       this.textColor = Colors.white});
 
   @override
